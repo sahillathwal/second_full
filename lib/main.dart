@@ -12,19 +12,21 @@ import 'firebase_options.dart';
 //global object for accessing device screen size
 late Size mq;
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   //enter full-screen
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
   //for setting orientation to portrait only
-  SystemChrome.setPreferredOrientations(
-          [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
-      .then((value) {
-    _initializeFirebase();
-    runApp(const MyApp());
-  });
+  await SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
+  // Initialize Firebase
+  await Firebase.initializeApp();
+
+  _initializeFirebase();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -49,8 +51,6 @@ class MyApp extends StatelessWidget {
 }
 
 _initializeFirebase() async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
   var result = await FlutterNotificationChannel.registerNotificationChannel(
       description: 'For Showing Message Notification',
       id: 'chats',
